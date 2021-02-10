@@ -19,20 +19,27 @@ app.get('/api/hello', (req, res) => {
 });
 
 app.post('/api/world', async (req, res) => {
-//   console.log(req.body);
-//   res.send(
-//     `I received your POST request. This is what you sent me: ${req.body.post}`,
-//   );
-    const { post } = req.body;
-    let yeet
+    let result
+    let params
+    const { ingredients, diet, health } = req.body;
 
-    await axios.get(`${edamamURI}&q=${post}`)
-        .then(({data}) => {
-            yeet = data;
+    if (health && diet) {
+      params = `&q=${ingredients}&health=${health}&diet=${diet}&to=10`
+    } else if (health) {
+      params = `&q=${ingredients}&health=${health}&to=10`
+    } else if (diet) {
+      params = `&q=${ingredients}&diet=${diet}&to=10`
+    } else {
+      params = `&q=${ingredients}&to=10`
+    }
+
+    await axios.get(edamamURI + params)
+        .then(({ data }) => {
+            result = data;
         })
         .catch(err => console.log(err))
 
-    res.send(yeet)
+    res.send(result)
 });
 
 // app.get('/', function(req, res) {
